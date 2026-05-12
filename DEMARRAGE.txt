@@ -1,0 +1,96 @@
+====================================================================
+  student-api  --  Guide de démarrage
+  TP Intégration Continue avec Jenkins  |  UNCHK Master 1
+====================================================================
+
+PRÉREQUIS
+---------
+  - Java 17 ou supérieur   : java -version
+  - Maven 3.9 ou supérieur : mvn -version
+  - Git                    : git --version
+
+
+CLONER LE PROJET
+----------------
+  git clone https://github.com/mldiakhame/student-api.git
+  cd student-api
+
+
+COMPILER LE PROJET
+------------------
+  mvn clean package -DskipTests
+
+  Le JAR est généré dans : target/student-api-1.0.0-SNAPSHOT.jar
+
+
+EXÉCUTER LES TESTS
+------------------
+  mvn clean test
+
+  Résultat attendu :
+    Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
+    BUILD SUCCESS
+
+  Les rapports XML des tests se trouvent dans :
+    target/surefire-reports/
+
+
+VÉRIFIER LA COUVERTURE DE CODE (JaCoCo)
+----------------------------------------
+  mvn verify
+
+  Le seuil minimal est fixé à 70 % (lignes couvertes).
+  Résultat attendu : All coverage checks have been met.
+
+  Le rapport HTML de couverture se trouve dans :
+    target/site/jacoco/index.html
+
+
+DÉMARRER LE SERVEUR
+-------------------
+  mvn spring-boot:run
+
+  L'API démarre sur : http://localhost:8080
+  Console H2        : http://localhost:8080/h2-console
+    JDBC URL  : jdbc:h2:mem:studentdb
+    Utilisateur : sa
+    Mot de passe : (vide)
+
+
+TESTER LES ENDPOINTS (exemples avec curl)
+------------------------------------------
+  Lister tous les étudiants :
+    curl http://localhost:8080/api/students
+
+  Créer un étudiant :
+    curl -X POST http://localhost:8080/api/students \
+         -H "Content-Type: application/json" \
+         -d "{\"nom\":\"Diop\",\"prenom\":\"Awa\",\"email\":\"awa@uvs.sn\",\"moyenne\":14.5}"
+
+  Récupérer l'étudiant avec l'id 1 :
+    curl http://localhost:8080/api/students/1
+
+  Supprimer l'étudiant avec l'id 1 :
+    curl -X DELETE http://localhost:8080/api/students/1
+
+
+STRUCTURE DU PROJET
+--------------------
+  src/main/java/sn/uvs/studentapi/
+    StudentApiApplication.java   -- point d'entrée Spring Boot
+    model/Student.java           -- entité JPA (id, nom, prenom, email, moyenne)
+    repository/StudentRepository.java  -- accès base de données
+    service/StudentService.java        -- logique métier
+    controller/StudentController.java  -- endpoints REST
+
+  src/test/java/sn/uvs/studentapi/
+    service/StudentServiceTest.java     -- 5 tests unitaires (Mockito)
+    controller/StudentControllerTest.java -- 5 tests d'intégration (MockMvc)
+
+  Jenkinsfile  -- pipeline CI Jenkins (5 stages)
+  pom.xml      -- dépendances Maven + configuration JaCoCo
+
+
+====================================================================
+  Encadrant : Dr. Mouhamadou Lamine DIAKHAME  |  UNCHK 2025-2026
+====================================================================
